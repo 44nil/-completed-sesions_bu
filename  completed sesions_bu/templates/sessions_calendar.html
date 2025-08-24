@@ -68,7 +68,17 @@
                             {% endif %}">
                   <div class="text-xs font-semibold flex items-center justify-between">
                     <span>{{ time_key }}</span>
-                    <span class="text-[11px] opacity-80">{{ s.capacity }} kap · {{ left }} kal</span>
+                    <span class="text-[11px] opacity-80">
+                      {% if left == 0 %}
+                        <span class="text-red-600 font-bold">DOLU</span>
+                      {% elif left == 1 %}
+                        <span class="text-orange-500 font-bold">Son 1 yer</span>
+                      {% elif left in [2,3] %}
+                        <span class="text-green-600">Kalan {{ left }}</span>
+                      {% elif left > 3 %}
+                        <span class="text-blue-600">{{ left }}/{{ s.capacity }} boş</span>
+                      {% endif %}
+                    </span>
                   </div>
                   {% if role == 'member' %}
                     {% if left > 0 %}
@@ -126,7 +136,7 @@ if (document.querySelectorAll('.admin-session-btn').length) {
   document.querySelectorAll('.admin-session-btn').forEach(card => {
     card.addEventListener('click', async () => {
       const sid = card.dataset.info;
-      const r = await fetch(`/api/session/${sid}`);
+      const r = await fetch(`/api/session/${sid}/details`);
       const d = await r.json();
       document.getElementById('mTitle').textContent = new Date(d.start_at).toLocaleString('tr-TR');
       document.getElementById('mCap').textContent = d.capacity;
@@ -146,7 +156,7 @@ function setupSessionButtonListeners() {
     document.querySelectorAll('.admin-session-btn').forEach(card => {
       card.addEventListener('click', async () => {
         const sid = card.dataset.info;
-        const r = await fetch(`/api/session/${sid}`);
+        const r = await fetch(`/api/session/${sid}/details`);
         const d = await r.json();
         document.getElementById('mTitle').textContent = new Date(d.start_at).toLocaleString('tr-TR');
         document.getElementById('mCap').textContent = d.capacity;
